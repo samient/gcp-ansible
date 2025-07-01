@@ -7,8 +7,8 @@ on:
     branches: [ "main" ]
 
 env:
-  GCP_PROJECT: ${{ secrets.GCP_PROJECT }}          # From GitHub Secrets
-  GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }} # Service account JSON
+  GCP_PROJECT: ${{ secrets.project_id }}          # From GitHub Secrets
+  GCP_CREDENTIALS: ${{ secrets.GCP_SA_KEY }} # Service account JSON
 
 jobs:
   deploy:
@@ -42,12 +42,12 @@ jobs:
       - name: Run ansible-lint
         run: |
           pip install ansible-lint
-          ansible-lint playbooks/deploy.yml
+          ansible-lint playbooks/network-vm.yaml
 
       # Execute Ansible playbook
       - name: Run Ansible playbook
         run: |
-          ansible-playbook playbooks/deploy.yml \
-            -e "gcp_project=$GCP_PROJECT" \
-            -e "gcp_credentials_file=~/.config/gcloud/service-account.json" \
+          ansible-playbook playbooks/network-vm.yaml \
+            -e "project_id=$project_id" \
+            -e "gcp_credentials_file=$GCP_SA_KEY" \
             --diff -v
