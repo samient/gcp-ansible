@@ -14,7 +14,7 @@
         auto_create_subnetworks: false   # Disables automatic subnet creation (we'll create custom subnets)
         project: "{{ GCP_PROJECT_ID }}"     # GCP project ID (passed as variable)
         auth_kind: "serviceaccount"      # Authentication method
-        service_account_file: "{{ gcp_credentials_file }}"  # Path to service account JSON key
+        service_account_file: "{{ GCP_SA_KEY }}"  # Path to service account JSON key
         state: present                  # Ensures the VPC exists (creates if missing)
 
     # Creates first subnet in us-central1 region
@@ -26,7 +26,7 @@
         ip_cidr_range: "10.0.1.0/24"      # CIDR range for subnet
         project: "{{ GCP_PROJECT_ID }}"
         auth_kind: "serviceaccount"
-        service_account_file: "{{ gcp_credentials_file }}"
+        service_account_file: "{{ GCP_SA_KEY }}"
         state: present
 
     # Creates second subnet in us-east1 region for redundancy
@@ -38,7 +38,7 @@
         ip_cidr_range: "10.0.2.0/24"      # Different CIDR range
         project: "{{ GCP_PROJECT_ID }}"
         auth_kind: "serviceaccount"
-        service_account_file: "{{ gcp_credentials_file }}"
+        service_account_file: "{{ GCP_SA_KEY }}"
         state: present
 
     # Creates firewall rule to allow HTTP/HTTPS traffic
