@@ -1,0 +1,53 @@
+name: Ansible GCP Deployment
+
+on:
+  push:
+    branches: [ "main" ]  # Triggers on pushes to main branch
+  pull_request:           # Optional: For testing PRs
+    branches: [ "main" ]
+
+env:
+  GCP_PROJECT: ${{ secrets.GCP_PROJECT }}          # From GitHub Secrets
+  GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }} # Service account JSON
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # Install dependencies
+      - name: Install Ansible and GCP dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible google-auth requests
+          ansible-galaxy collection install google.cloud
+
+      # Configure GCP credentials
+      - name: Configure GCP credentials
+        run: |
+          mkdir -p ~/.config/gcloud/
+          echo "$GCP_CREDENTIALS" > ~/.config/gcloud/service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS=~/.config/gcloud/service-account.json
+
+      # Run ansible-lint for syntax checking
+      - name: Run ansible-lint
+        run: |
+          pip install ansible-lint
+          ansible-lint playbooks/deploy.yml
+
+      # Execute Ansible playbook
+      - name: Run Ansible playbook
+        run: |
+          ansible-playbook playbooks/deploy.yml \
+            -e "gcp_project=$GCP_PROJECT" \
+            -e "gcp_credentials_file=~/.config/gcloud/service-account.json" \
+            --diff -v
