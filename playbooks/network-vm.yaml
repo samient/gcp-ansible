@@ -12,9 +12,9 @@
       google.cloud.gcp_compute_network:  # Module documentation: https://docs.ansible.com/ansible/latest/collections/google/cloud/gcp_compute_network_module.html
         name: "ansible-network"          # Name of the VPC network
         auto_create_subnetworks: false   # Disables automatic subnet creation (we'll create custom subnets)
-        project: "{{ GCP_PROJECT_ID }}"     # GCP project ID (passed as variable)
+        project: "{ GCP_PROJECT_ID }"     # GCP project ID (passed as variable)
         auth_kind: "serviceaccount"      # Authentication method
-        service_account_file: "{{ GCP_SA_KEY }}"  # Path to service account JSON key
+        service_account_file: "{ GCP_SA_KEY }"  # Path to service account JSON key
         state: present                  # Ensures the VPC exists (creates if missing)
 
     # Creates first subnet in us-central1 region
@@ -24,9 +24,9 @@
         network: "ansible-network"         # Parent VPC network
         region: "us-central1"              # GCP region
         ip_cidr_range: "10.0.1.0/24"      # CIDR range for subnet
-        project: "{{ GCP_PROJECT_ID }}"
+        project: "{ GCP_PROJECT_ID }"
         auth_kind: "serviceaccount"
-        service_account_file: "{{ GCP_SA_KEY }}"
+        service_account_file: "{ GCP_SA_KEY }"
         state: present
 
     # Creates second subnet in us-east1 region for redundancy
@@ -36,9 +36,9 @@
         network: "ansible-network"         # Same VPC network
         region: "us-east1"                 # Different region for HA
         ip_cidr_range: "10.0.2.0/24"      # Different CIDR range
-        project: "{{ GCP_PROJECT_ID }}"
+        project: "{ GCP_PROJECT_ID }"
         auth_kind: "serviceaccount"
-        service_account_file: "{{ GCP_SA_KEY }}"
+        service_account_file: "{ GCP_SA_KEY }"
         state: present
 
     # Creates firewall rule to allow HTTP/HTTPS traffic
@@ -50,9 +50,9 @@
         allowed:
           - protocol: "tcp"               # Allow TCP protocol
             ports: ["80", "443"]          # HTTP and HTTPS ports
-        project: "{{ GCP_PROJECT_ID }}"
+        project: "{ GCP_PROJECT_ID }"
         auth_kind: "serviceaccount"
-        service_account_file: "{{ GCP_SA_KEY }}"
+        service_account_file: "{ GCP_SA_KEY }"
         state: present
 
     # Creates a Compute Engine VM instance
@@ -72,15 +72,15 @@
               - name: "External NAT"     # Configures public IP
                 type: "ONE_TO_ONE_NAT"  # Enables Internet access
         zone: "us-central1-a"           # Zone must match subnet region
-        project: "{{ GCP_PROJECT_ID }}"
+        project: "{ GCP_PROJECT_ID }"
         auth_kind: "serviceaccount"
-        service_account_file: "{{ GCP_SA_KEY }}"
+        service_account_file: "{ GCP_SA_KEY }"
         state: present
     
     - name: Create GCS bucket
       google.cloud.gcp_storage_bucket:  # Module for GCS buckets
         name: "my-ansible-bucket"       # Globally unique bucket name
-        project: "{{ GCP_PROJECT_ID }}"      # Project ID
+        project: "{ GCP_PROJECT_ID }"      # Project ID
         auth_kind: "serviceaccount"     # Auth method
-        service_account_file: "{{ GCP_SA_KEY }}"  # Credentials
+        service_account_file: "{ GCP_SA_KEY }"  # Credentials
         state: present                 # Ensures bucket exists

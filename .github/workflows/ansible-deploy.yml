@@ -35,8 +35,8 @@ jobs:
       - name: Configure GCP credentials
         run: |
           mkdir -p ~/.config/gcloud/
-          echo "$GCP_CREDENTIALS" > {{ GCP_SA_KEY }}
-          export GOOGLE_APPLICATION_CREDENTIALS= "{{ GCP_SA_KEY }}"
+          echo "$GCP_CREDENTIALS" > { GCP_SA_KEY }
+          export GOOGLE_APPLICATION_CREDENTIALS= "{ GCP_SA_KEY }"
 
       # Run ansible-lint for syntax checking
       - name: Run ansible-lint
