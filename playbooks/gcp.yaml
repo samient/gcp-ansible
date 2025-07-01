@@ -1,5 +1,0 @@
-plugin: google.cloud.gcp_compute  # Uses GCP compute plugin for dynamic inventory
-projects:
-  - test-data-462007               # Specifies which GCP project to scan
-auth_kind: serviceaccount         # Authentication method
-service_account_file: {{ secrets.GCP_SA_KEY }}  # Credentials location

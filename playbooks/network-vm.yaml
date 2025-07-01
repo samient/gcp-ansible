@@ -4,7 +4,7 @@
 - name: Provision GCP infrastructure
   hosts: localhost  # Runs on the Ansible control node (not on remote hosts)
   connection: local # Executes modules locally (required for GCP API calls)
-  gather_facts: no  # Disables fact gathering (not needed for cloud provisioning)
+  gather_facts: true  # Disables fact gathering (not needed for cloud provisioning)
 
   tasks:
     # Creates a custom VPC network (module from google.cloud collection)
@@ -12,7 +12,7 @@
       google.cloud.gcp_compute_network:  # Module documentation: https://docs.ansible.com/ansible/latest/collections/google/cloud/gcp_compute_network_module.html
         name: "ansible-network"          # Name of the VPC network
         auto_create_subnetworks: false   # Disables automatic subnet creation (we'll create custom subnets)
-        project: "{{ project_id }}"     # GCP project ID (passed as variable)
+        project: "{{ GCP_PROJECT_ID }}"     # GCP project ID (passed as variable)
         auth_kind: "serviceaccount"      # Authentication method
         service_account_file: "{{ gcp_credentials_file }}"  # Path to service account JSON key
         state: present                  # Ensures the VPC exists (creates if missing)
@@ -24,7 +24,7 @@
         network: "ansible-network"         # Parent VPC network
         region: "us-central1"              # GCP region
         ip_cidr_range: "10.0.1.0/24"      # CIDR range for subnet
-        project: "{{ project_id }}"
+        project: "{{ GCP_PROJECT_ID }}"
         auth_kind: "serviceaccount"
         service_account_file: "{{ gcp_credentials_file }}"
         state: present
@@ -36,7 +36,7 @@
         network: "ansible-network"         # Same VPC network
         region: "us-east1"                 # Different region for HA
         ip_cidr_range: "10.0.2.0/24"      # Different CIDR range
-        project: "{{ project_id }}"
+        project: "{{ GCP_PROJECT_ID }}"
         auth_kind: "serviceaccount"
         service_account_file: "{{ gcp_credentials_file }}"
         state: present
@@ -50,7 +50,7 @@
         allowed:
           - protocol: "tcp"               # Allow TCP protocol
             ports: ["80", "443"]          # HTTP and HTTPS ports
-        project: "{{ project_id }}"
+        project: "{{ GCP_PROJECT_ID }}"
         auth_kind: "serviceaccount"
         service_account_file: "{{ GCP_SA_KEY }}"
         state: present
@@ -72,7 +72,7 @@
               - name: "External NAT"     # Configures public IP
                 type: "ONE_TO_ONE_NAT"  # Enables Internet access
         zone: "us-central1-a"           # Zone must match subnet region
-        project: "{{ project_id }}"
+        project: "{{ GCP_PROJECT_ID }}"
         auth_kind: "serviceaccount"
         service_account_file: "{{ GCP_SA_KEY }}"
         state: present
@@ -80,7 +80,7 @@
     - name: Create GCS bucket
       google.cloud.gcp_storage_bucket:  # Module for GCS buckets
         name: "my-ansible-bucket"       # Globally unique bucket name
-        project: "{{ project_id }}"      # Project ID
+        project: "{{ GCP_PROJECT_ID }}"      # Project ID
         auth_kind: "serviceaccount"     # Auth method
         service_account_file: "{{ GCP_SA_KEY }}"  # Credentials
         state: present                 # Ensures bucket exists
