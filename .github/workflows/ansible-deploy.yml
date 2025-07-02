@@ -7,8 +7,8 @@ on:
     branches: [ "main" ]
 
 env:
-  GCP_PROJECT: ${ secrets.GCP_PROJECT_ID }          # From GitHub Secrets
-  GCP_CREDENTIALS: ${ secrets.GCP_SA_KEY } # Service account JSON
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}          # From GitHub Secrets
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }} # Service account JSON
 
 jobs:
   deploy:
@@ -35,8 +35,8 @@ jobs:
       - name: Configure GCP credentials
         run: |
           mkdir -p ~/.config/gcloud/
-          echo "$GCP_CREDENTIALS" > { GCP_SA_KEY }
-          export GOOGLE_APPLICATION_CREDENTIALS= "{ GCP_SA_KEY }"
+          echo "$GCP_SA_KEY" > ~/.config/gcloud/service-account.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$(realpath ~/.config/gcloud/service-account.json)" >> $GITHUB_ENV
 
       # Run ansible-lint for syntax checking
       - name: Run ansible-lint
@@ -48,6 +48,6 @@ jobs:
       - name: Run Ansible playbook
         run: |
           ansible-playbook playbooks/network-vm.yaml \
-            -e "project_id=${ GCP_PROJECT_ID }" \
-            -e "gcp_credentials_file=${ GCP_SA_KEY }" \
+            -e "project_id=$GCP_PROJECT_ID" \
+            -e "gcp_credentials_file=$GOOGLE_APPLICATION_CREDENTIALS" \
             --diff -v
