@@ -1,14 +1,14 @@
 ![image](https://github.com/user-attachments/assets/42130c7c-43be-4e64-a5ce-960854e9f463)
 
-Amsible Roles :
-Update Packages
-install required softwares
-validate installations
-update configurations file
-copy required files to the target
-create users
-change permissions of the user
-etc
+Ansible Roles :
+# Update Packages
+# install required softwares
+# validate installations
+# update configurations file
+# copy required files to the target
+# create users
+# change permissions of the user
+## etc
 ![image](https://github.com/user-attachments/assets/4c3ff00a-ab03-4ddc-a815-2fc5e63b21b0)
 
 
